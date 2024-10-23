@@ -29,8 +29,8 @@ public class ModBlocks {
         Registry.register(Registries.ITEM, Identifier.of(HerosAnchorOptimizer.MOD_ID, name),
                 new BlockItem(block, new Item.Settings()));
     }
-    //public static void registerModBlocks() {
-    //    HerosAnchorOptimizer.LOGGER.info("Registering Mod Blocks for " + HerosAnchorOptimizer.MOD_ID);
-//    }
+    public static void registerModBlocks() {
+        HerosAnchorOptimizer.LOGGER.info("Registering Mod Blocks for " + HerosAnchorOptimizer.MOD_ID);
+    }
 }
 

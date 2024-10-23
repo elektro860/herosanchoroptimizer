@@ -1,9 +1,9 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "herosanchoroptimizer:block/fakeanchor_side",
-		"1": "herosanchoroptimizer:block/fakeanchor_vertical",
-		"particle": "herosanchoroptimizer:block/fakeanchor_side"
+		"0": "herosanchoroptimizer:block/fake_anchor_side",
+		"1": "herosanchoroptimizer:block/fake_anchor_vertical",
+		"particle": "herosanchoroptimizer:block/fake_anchor_side"
 	},
 	"elements": [
 		{

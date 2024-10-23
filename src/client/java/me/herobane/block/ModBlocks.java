@@ -1,9 +1,8 @@
 package me.herobane.block;
 
         import me.herobane.HerosAnchorOptimizer;
-        import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+        import net.minecraft.block.AbstractBlock;
         import net.minecraft.block.Block;
-        import net.minecraft.block.Blocks;
         import net.minecraft.item.BlockItem;
         import net.minecraft.item.Item;
         import net.minecraft.registry.Registries;
@@ -13,12 +12,11 @@ package me.herobane.block;
 
 
 public class ModBlocks {
-
     public static final Block FAKE_ANCHOR = registerBlock("fake_anchor",
-            new Block(FabricBlockSettings.copyOf(Blocks.GLASS)
+            new Block(AbstractBlock.Settings.create()
                     .nonOpaque() // Makes the block translucent
-                    .noCollision() // Walk-through block (like glass)
-                    .strength(0.0f) // Instantly breaks
+                    .noCollision() // Walk-through block like a fern
+                    .strength(-1.0f) // Can't Break
                     .dropsNothing() // Does not drop items when broken
                     .replaceable() // Replaceable like a fern
                     .sounds(BlockSoundGroup.POWDER_SNOW)));
@@ -31,7 +29,8 @@ public class ModBlocks {
         Registry.register(Registries.ITEM, Identifier.of(HerosAnchorOptimizer.MOD_ID, name),
                 new BlockItem(block, new Item.Settings()));
     }
-    public static void registerModBlocks() {
-        HerosAnchorOptimizer.LOGGER.info("Registering Mod Blocks for " + HerosAnchorOptimizer.MOD_ID);
-}}
+    //public static void registerModBlocks() {
+    //    HerosAnchorOptimizer.LOGGER.info("Registering Mod Blocks for " + HerosAnchorOptimizer.MOD_ID);
+//    }
+}
 

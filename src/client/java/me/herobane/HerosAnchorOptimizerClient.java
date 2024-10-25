@@ -39,8 +39,8 @@ public class HerosAnchorOptimizerClient implements ClientModInitializer {
 
 				// Check if the player is crouching (shift) or charging
 				if (!player.isSneaking() && !holdingGlowstone) {
-					// Charge is 0-3, not holding glowstone, and would explode in this dimension so like normal anchor
-					if (charge >= 0 && charge <= 3 && wouldExplode) {
+					// Charge is 1-3, not holding glowstone, and would explode in this dimension so like normal anchor
+					if (charge > 0 && charge <= 3 && wouldExplode) {
 						placeClientSideFakeAnchor(world, hitResult);
 						return ActionResult.SUCCESS;
 					}

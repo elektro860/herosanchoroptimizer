@@ -1,31 +1,30 @@
 package me.herobane.event;
 
-import net.minecraft.block.Blocks;
+import me.herobane.block.ModBlocks;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class BlockExplosionHandler {
 
-    // https://minecraft.fandom.com/wiki/Explosion#Effect
+    // https://minecraft.wiki/w/Explosion#Calculating_which_blocks_to_destroy
     private static final float EXPLOSION_STRENGTH = 5.0F; // Respawn anchor explosion strength
-    private static final int RADIUS = 2; // Radius within which to check for blocks
+    private static final int RADIUS = 3; // Radius within which to check for blocks
 
     public static void handleExplosion(World world, BlockPos anchorPos) {
 
-        // Looping through a cube with r=5 around
+
         for (int x = -RADIUS; x <= RADIUS; x++) {
-            for (int y = -RADIUS; y <= RADIUS; y++) {
+            for (int y = -1; y <= RADIUS; y++) {
                 for (int z = -RADIUS; z <= RADIUS; z++) {
                     if (x==0 && y==0 && z == 0) continue;
-                    if ((Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)) >= 16) continue;
 
                     BlockPos pos = anchorPos.add(x, y, z);
                     double distanceSquared = pos.getSquaredDistance(anchorPos);
 
                     // Check if the block is within the explosion radius
                     if (distanceSquared <= RADIUS * RADIUS) {
-                        float intensity = (0.7F + 0) * EXPLOSION_STRENGTH;
+                        float intensity = (0.7F) * EXPLOSION_STRENGTH; //Remove the [0,0.6] cuz you don't want random
                         float stepSize = 0.3F; // Attenuation step size
                         float attenuation = 0.225F; // Intensity reduction per step
 
@@ -50,7 +49,7 @@ public class BlockExplosionHandler {
 
                             // If intensity is still greater than zero, replace the block
                             if (intensity >= 0 && isThiccEnough(world, stepPos)) {
-                                world.setBlockState(stepPos, Blocks.AIR.getDefaultState());
+                                world.setBlockState(stepPos, ModBlocks.FAKE_AIR.getDefaultState());
                             }
 
                             // If intensity drops to zero or below, stop processing this ray

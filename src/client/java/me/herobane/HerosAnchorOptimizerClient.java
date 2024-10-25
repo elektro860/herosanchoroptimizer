@@ -23,8 +23,8 @@
 		public void onInitializeClient() { // Ensure this method name matches ClientModInitializer ok mr fabric
 			LOGGER.info("Hello HerobaneNair's Anchor Optimizer");
 
-			// Register the Fake Anchor block for translucent rendering
 			BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FAKE_ANCHOR, RenderLayer.getTranslucent());
+			BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FAKE_AIR, RenderLayer.getTranslucent());
 
 			// Register an event for right-clicking a respawn anchor
 			UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {

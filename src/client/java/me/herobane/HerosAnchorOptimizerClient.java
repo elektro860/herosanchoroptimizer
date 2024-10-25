@@ -1,5 +1,5 @@
 	package me.herobane;
-
+	import me.herobane.event.BlockExplosionHandler;
 	import me.herobane.block.ModBlocks;
 	import net.fabricmc.api.ClientModInitializer;
 	import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -43,12 +43,14 @@
 						// Charge is 1-3, not holding glowstone, and would explode in this dimension
 						if (charge >= 1 && charge <= 3 && wouldExplode) {
 							placeClientSideFakeAnchor(world, hitResult);
+							BlockExplosionHandler.handleExplosion(world, hitResult.getBlockPos());
 							return ActionResult.SUCCESS;
 						}
 
 						// Charge is 4 (anchor full), and would explode in this dimension
 						if (charge == 4 && wouldExplode) {
 							placeClientSideFakeAnchor(world, hitResult);
+							BlockExplosionHandler.handleExplosion(world, hitResult.getBlockPos());
 							return ActionResult.SUCCESS;
 						}
 					}

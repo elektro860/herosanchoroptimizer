@@ -64,8 +64,9 @@ public class HerosAnchorOptimizerClient implements ClientModInitializer {
 					if ((charge >= 1 && charge <= 3 && wouldExplode) || (charge == 4 && wouldExplode)) {
 						placeClientSideFakeAnchor(world, hitResult);
 
+
 						PlayerListEntry playerListEntry = Objects.requireNonNull(MinecraftClient.getInstance().getNetworkHandler()).getPlayerListEntry(player.getUuid());
-						if (playerListEntry != null && fiveMinuteStatus) {  // Ensure 5-minute status is true
+						if (playerListEntry != null && fiveMinuteStatus && ping>30) {  // Ensure 5-minute status is true
 							BlockPos pos = hitResult.getBlockPos();
 							scheduler.schedule(() -> replaceWithGhostAnchor(world, pos), ping, TimeUnit.MILLISECONDS);
 						}

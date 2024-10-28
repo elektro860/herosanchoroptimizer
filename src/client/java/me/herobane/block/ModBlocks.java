@@ -21,7 +21,7 @@ public class ModBlocks {
                     .dropsNothing() // Does not drop items when broken
                     .replaceable() // Replaceable like a fern
                     .sounds(BlockSoundGroup.POWDER_SNOW)));
-    public static final Block GHOST_ANCHOR = registerBlock("host_anchor",
+    public static final Block GHOST_ANCHOR = registerBlock("ghost_anchor",
             new Block(AbstractBlock.Settings.create()
                     .nonOpaque() // Makes the block translucent
                     .noCollision() // Walk-through block like a fern

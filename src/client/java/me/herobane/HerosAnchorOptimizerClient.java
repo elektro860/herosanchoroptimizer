@@ -68,9 +68,9 @@ public class HerosAnchorOptimizerClient implements ClientModInitializer {
 						PlayerListEntry playerListEntry = Objects.requireNonNull(MinecraftClient.getInstance().getNetworkHandler()).getPlayerListEntry(player.getUuid());
 						if (playerListEntry != null) {
 
-                            // Schedule the delayed replacement of the fake anchor with red stained glass
+                            // Schedule the delayed replacement of the fake anchor with red stained glas
 							BlockPos pos = hitResult.getBlockPos();
-							scheduler.schedule(() -> replaceWithRedStainedGlass(world, pos), (ping), TimeUnit.MILLISECONDS);
+							scheduler.schedule(() -> replaceWithGhostAnchor(world, pos), (ping), TimeUnit.MILLISECONDS);
 						}
 
 						return ActionResult.SUCCESS;
@@ -89,8 +89,8 @@ public class HerosAnchorOptimizerClient implements ClientModInitializer {
 	}
 
 	// Replace the fake anchor with red stained glass if it's still present
-	private void replaceWithRedStainedGlass(World world, BlockPos pos) {
-		// Place a fake anchor client-side
+	private void replaceWithGhostAnchor(World world, BlockPos pos) {
+		// Place a ghost anchor client-side
 		if (world.getBlockState(pos).isOf(ModBlocks.FAKE_ANCHOR)) {
 			world.setBlockState(pos, ModBlocks.GHOST_ANCHOR.getDefaultState());
 		}

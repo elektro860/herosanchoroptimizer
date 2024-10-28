@@ -1,6 +1,5 @@
 package me.herobane;
 
-//import me.herobane.event.BlockExplosionHandler;
 import me.herobane.block.ModBlocks;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -26,11 +25,12 @@ import java.util.concurrent.TimeUnit;
 public class HerosAnchorOptimizerClient implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("heros_anchor_optimizer");
 	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+	private boolean fiveMinuteStatus = false;
+	private long joinTime;
 
 	@Override
 	public void onInitializeClient() {
-
-        LOGGER.info("Hello HerobaneNair's Anchor Optimizer");
+		LOGGER.info("Hello HerobaneNair's Anchor Optimizer");
 
 		// Set block render layers for custom blocks
 		BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FAKE_ANCHOR, RenderLayer.getTranslucent());
@@ -41,6 +41,7 @@ public class HerosAnchorOptimizerClient implements ClientModInitializer {
 		UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
 			if (world.isClient() && world.getBlockState(hitResult.getBlockPos()).isOf(Blocks.RESPAWN_ANCHOR)) {
 
+				checkFiveMinuteStatus(); // Check if 5 minutes have passed
 
 				boolean isSingleplayer = MinecraftClient.getInstance().isInSingleplayer();
 				int charge = world.getBlockState(hitResult.getBlockPos()).get(RespawnAnchorBlock.CHARGES);
@@ -52,25 +53,21 @@ public class HerosAnchorOptimizerClient implements ClientModInitializer {
 				if (!player.isSneaking() && !holdingGlowstoneMainHand && !holdingGlowstoneOffHand && !isSingleplayer) {
 					int ping;
 					MinecraftClient client = MinecraftClient.getInstance();
-					//MinecraftClient.getInstance().getNetworkHandler().getPlayerListEntry(MinecraftClient.getInstance().player.getUuid()).getLatency();
+
 					if (client.player != null) {
 						PlayerListEntry entry = Objects.requireNonNull(client.getNetworkHandler()).getPlayerListEntry(client.player.getUuid());
-						// If entry is null, set clientPing to 100, else get the latency
 						ping = (entry != null) ? entry.getLatency() : 100;
 					} else {
 						ping = 100;
 					}
+
 					if ((charge >= 1 && charge <= 3 && wouldExplode) || (charge == 4 && wouldExplode)) {
 						placeClientSideFakeAnchor(world, hitResult);
-						//BlockExplosionHandler.handleExplosion(world, hitResult.getBlockPos());
 
-						// Retrieve the player's ping from PlayerListEntry
 						PlayerListEntry playerListEntry = Objects.requireNonNull(MinecraftClient.getInstance().getNetworkHandler()).getPlayerListEntry(player.getUuid());
-						if (playerListEntry != null) {
-
-                            // Schedule the delayed replacement of the fake anchor with red stained glas
+						if (playerListEntry != null && fiveMinuteStatus) {  // Ensure 5-minute status is true
 							BlockPos pos = hitResult.getBlockPos();
-							scheduler.schedule(() -> replaceWithGhostAnchor(world, pos), (ping), TimeUnit.MILLISECONDS);
+							scheduler.schedule(() -> replaceWithGhostAnchor(world, pos), ping, TimeUnit.MILLISECONDS);
 						}
 
 						return ActionResult.SUCCESS;
@@ -80,6 +77,19 @@ public class HerosAnchorOptimizerClient implements ClientModInitializer {
 			}
 			return ActionResult.PASS;
 		});
+	}
+
+	// Start the timer for checking 5-minute server time
+	private void startFiveMinuteTimer() {
+		joinTime = System.currentTimeMillis();
+		scheduler.schedule(() -> fiveMinuteStatus = true, 5, TimeUnit.MINUTES);
+	}
+
+	// Check if the player has been on the server for 5 minutes
+	private void checkFiveMinuteStatus() {
+		if (joinTime == 0) {  // Timer hasn't been started yet
+			startFiveMinuteTimer();
+		}
 	}
 
 	// Place a fake anchor client-side

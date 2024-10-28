@@ -1,7 +1,12 @@
+//Currently unused, ignore for now - just having a place to save it
+
+
+
 package me.herobane.event;
 
 import me.herobane.block.ModBlocks;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -9,64 +14,178 @@ public class BlockExplosionHandler {
 
     // https://minecraft.wiki/w/Explosion#Calculating_which_blocks_to_destroy
     private static final float EXPLOSION_STRENGTH = 5.0F; // Respawn anchor explosion strength
-    private static final int RADIUS = 3; // Radius within which to check for blocks
+    private static final int RADIUS = 2; // Radius within which to check for blocks
+
+    // Paths defined from your provided data (full data should be populated)
+    private static final int[][][] EXPLOSION_PATHS = {
+            {{-2, -2, -2}, {-1, -1, -1}},
+            {{-2, -2, -1}, {-1, -1, -1}, {-1, -1, 0}},
+            {{-2, -2, 0}, {-1, -1, 0}},
+            {{-2, -2, 1}, {-1, -1, 1}, {-1, -1, 0}},
+            {{-2, -2, 2}, {-1, -1, 1}},
+            {{-2, -1, -2}, {-1, -1, -1}, {-1, 0, -1}},
+            {{-2, -1, -1}, {-1, -1, -1}, {-1, 0, 0}},
+            {{-2, -1, 0}, {-1, -1, 0}, {-1, 0, 0}},
+            {{-2, -1, 1}, {-1, -1, 1}, {-1, 0, 0}},
+            {{-2, -1, 2}, {-1, -1, 1}, {-1, 0, 1}},
+            {{-2, 0, -2}, {-1, 0, -1}},
+            {{-2, 0, -1}, {-1, 0, -1}, {-1, 0, 0}},
+            {{-2, 0, 0}, {-1, 0, 0}},
+            {{-2, 0, 1}, {-1, 0, 1}, {-1, 0, 0}},
+            {{-2, 0, 2}, {-1, 0, 1}},
+            {{-2, 1, -2}, {-1, 1, -1}, {-1, 0, -1}},
+            {{-2, 1, -1}, {-1, 1, -1}, {-1, 0, 0}},
+            {{-2, 1, 0}, {-1, 1, 0}, {-1, 0, 0}},
+            {{-2, 1, 1}, {-1, 1, 1}, {-1, 0, 0}},
+            {{-2, 1, 2}, {-1, 1, 1}, {-1, 0, 1}},
+            {{-2, 2, -2}, {-1, 1, -1}},
+            {{-2, 2, -1}, {-1, 1, -1}, {-1, 1, 0}},
+            {{-2, 2, 0}, {-1, 1, 0}},
+            {{-2, 2, 1}, {-1, 1, 1}, {-1, 1, 0}},
+            {{-2, 2, 2}, {-1, 1, 1}},
+            {{-1, -2, -2}, {-1, -1, -1}, {0, -1, -1}},
+            {{-1, -2, -1}, {-1, -1, -1}, {0, -1, 0}},
+            {{-1, -2, 0}, {-1, -1, 0}, {0, -1, 0}},
+            {{-1, -2, 1}, {-1, -1, 1}, {0, -1, 0}},
+            {{-1, -2, 2}, {-1, -1, 1}, {0, -1, 1}},
+            {{-1, -1, -2}, {-1, -1, -1}, {0, 0, -1}},
+            {{-1, -1, 2}, {-1, -1, 1}, {0, 0, 1}},
+            {{-1, 0, -2}, {-1, 0, -1}, {0, 0, -1}},
+            {{-1, 0, 2}, {-1, 0, 1}, {0, 0, 1}},
+            {{-1, 1, -2}, {-1, 1, -1}, {0, 0, -1}},
+            {{-1, 1, 2}, {-1, 1, 1}, {0, 0, 1}},
+            {{-1, 2, -2}, {-1, 1, -1}, {0, 1, -1}},
+            {{-1, 2, -1}, {-1, 1, -1}, {0, 1, 0}},
+            {{-1, 2, 0}, {-1, 1, 0}, {0, 1, 0}},
+            {{-1, 2, 1}, {-1, 1, 1}, {0, 1, 0}},
+            {{-1, 2, 2}, {-1, 1, 1}, {0, 1, 1}},
+            {{0, -2, -2}, {0, -1, -1}},
+            {{0, -2, -1}, {0, -1, -1}, {0, -1, 0}},
+            {{0, -2, 0}, {0, -1, 0}},
+            {{0, -2, 1}, {0, -1, 1}, {0, -1, 0}},
+            {{0, -2, 2}, {0, -1, 1}},
+            {{0, -1, -2}, {0, -1, -1}, {0, 0, -1}},
+            {{0, -1, 2}, {0, -1, 1}, {0, 0, 1}},
+            {{0, 0, -2}, {0, 0, -1}},
+            {{0, 0, 2}, {0, 0, 1}},
+            {{0, 1, -2}, {0, 1, -1}, {0, 0, -1}},
+            {{0, 1, 2}, {0, 1, 1}, {0, 0, 1}},
+            {{0, 2, -2}, {0, 1, -1}},
+            {{0, 2, -1}, {0, 1, -1}, {0, 1, 0}},
+            {{0, 2, 0}, {0, 1, 0}},
+            {{0, 2, 1}, {0, 1, 1}, {0, 1, 0}},
+            {{0, 2, 2}, {0, 1, 1}},
+            {{1, -2, -2}, {1, -1, -1}, {0, -1, -1}},
+            {{1, -2, -1}, {1, -1, -1}, {0, -1, 0}},
+            {{1, -2, 0}, {1, -1, 0}, {0, -1, 0}},
+            {{1, -2, 1}, {1, -1, 1}, {0, -1, 0}},
+            {{1, -2, 2}, {1, -1, 1}, {0, -1, 1}},
+            {{1, -1, -2}, {1, -1, -1}, {0, 0, -1}},
+            {{1, -1, 2}, {1, -1, 1}, {0, 0, 1}},
+            {{1, 0, -2}, {1, 0, -1}, {0, 0, -1}},
+            {{1, 0, 2}, {1, 0, 1}, {0, 0, 1}},
+            {{1, 1, -2}, {1, 1, -1}, {0, 0, -1}},
+            {{1, 1, 2}, {1, 1, 1}, {0, 0, 1}},
+            {{1, 2, -2}, {1, 1, -1}, {0, 1, -1}},
+            {{1, 2, -1}, {1, 1, -1}, {0, 1, 0}},
+            {{1, 2, 0}, {1, 1, 0}, {0, 1, 0}},
+            {{1, 2, 1}, {1, 1, 1}, {0, 1, 0}},
+            {{1, 2, 2}, {1, 1, 1}, {0, 1, 1}},
+            {{2, -2, -2}, {1, -1, -1}},
+            {{2, -2, -1}, {1, -1, -1}, {1, -1, 0}},
+            {{2, -2, 0}, {1, -1, 0}},
+            {{2, -2, 1}, {1, -1, 1}, {1, -1, 0}},
+            {{2, -2, 2}, {1, -1, 1}},
+            {{2, -1, -2}, {1, -1, -1}, {1, 0, -1}},
+            {{2, -1, -1}, {1, -1, -1}, {1, 0, 0}},
+            {{2, -1, 0}, {1, -1, 0}, {1, 0, 0}},
+            {{2, -1, 1}, {1, -1, 1}, {1, 0, 0}},
+            {{2, -1, 2}, {1, -1, 1}, {1, 0, 1}},
+            {{2, 0, -2}, {1, 0, -1}},
+            {{2, 0, -1}, {1, 0, -1}, {1, 0, 0}},
+            {{2, 0, 0}, {1, 0, 0}},
+            {{2, 0, 1}, {1, 0, 1}, {1, 0, 0}},
+            {{2, 0, 2}, {1, 0, 1}},
+            {{2, 1, -2}, {1, 1, -1}, {1, 0, -1}},
+            {{2, 1, -1}, {1, 1, -1}, {1, 0, 0}},
+            {{2, 1, 0}, {1, 1, 0}, {1, 0, 0}},
+            {{2, 1, 1}, {1, 1, 1}, {1, 0, 0}},
+            {{2, 1, 2}, {1, 1, 1}, {1, 0, 1}},
+            {{2, 2, -2}, {1, 1, -1}},
+            {{2, 2, -1}, {1, 1, -1}, {1, 1, 0}},
+            {{2, 2, 0}, {1, 1, 0}},
+            {{2, 2, 1}, {1, 1, 1}, {1, 1, 0}},
+            {{2, 2, 2}, {1, 1, 1}}
+    };
+
 
     public static void handleExplosion(World world, BlockPos anchorPos) {
+        double[] explosivity = new double[124];
+        BlockState currentBlock;
+        int c = 0;
 
+        // First pass: Collect blast resistance values and set to FAKE_AIR if needed
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                for (int z = -1; z <= 1; z++) {
+                    if (Math.abs(x) == 1 || Math.abs(y) == 1 || Math.abs(z) == 1) {
+                        BlockPos checkPos = anchorPos.add(x, y, z);
+                        currentBlock = world.getBlockState(checkPos);
+                        double resistance = currentBlock.getBlock().getBlastResistance();
+                        explosivity[c] = resistance;
 
-        for (int x = -RADIUS; x <= RADIUS; x++) {
-            for (int y = -1; y <= RADIUS; y++) {
-                for (int z = -RADIUS; z <= RADIUS; z++) {
-                    if (x==0 && y==0 && z == 0) continue;
-
-                    BlockPos pos = anchorPos.add(x, y, z);
-                    double distanceSquared = pos.getSquaredDistance(anchorPos);
-
-                    // Check if the block is within the explosion radius
-                    if (distanceSquared <= RADIUS * RADIUS) {
-                        float intensity = (0.7F) * EXPLOSION_STRENGTH; //Remove the [0,0.6] cuz you don't want random
-                        float stepSize = 0.3F; // Attenuation step size
-                        float attenuation = 0.225F; // Intensity reduction per step
-
-                        // Check each step along the ray
-                        for (float step = 0; step < Math.sqrt(distanceSquared); step += stepSize) {
-                            BlockPos stepPos = anchorPos.add(
-                                    Math.round(x * (step / RADIUS)),
-                                    Math.round(y * (step / RADIUS)),
-                                    Math.round(z * (step / RADIUS))
-                            );
-
-                            BlockState blockState = world.getBlockState(stepPos);
-
-                            // Check if the block is air; if so, skip intensity reduction
-                            if (!blockState.isAir()) {
-                                float blastResistance = blockState.getBlock().getBlastResistance();
-
-                                // Reduce intensity based on attenuation and block resistance
-                                intensity -= attenuation;
-                                intensity -= (blastResistance + 0.3F) * 0.3F;
-                            }
-
-                            // If intensity is still greater than zero, replace the block
-                            if (intensity >= 0 && isThiccEnough(world, stepPos)) {
-                                world.setBlockState(stepPos, ModBlocks.FAKE_AIR.getDefaultState());
-                            }
-
-                            // If intensity drops to zero or below, stop processing this ray
-                            if (intensity <= 0) {
-                                break;
-                            }
+                        // If resistance < 4 and block isn't air, set to FAKE_AIR
+                        if (resistance < 4 && currentBlock.getBlock() != Blocks.AIR) {
+                            world.setBlockState(checkPos, ModBlocks.FAKE_AIR.getDefaultState());
                         }
+                        c++;
                     }
                 }
             }
         }
-    }
 
-    // Helper method to check if a block is a full cube
-    private static boolean isThiccEnough(World world, BlockPos pos) {
-        BlockState state = world.getBlockState(pos);
-        // Check if the block is a full opaque cube and if it's a solid block (walkable)
-        return state.isFullCube(world, pos);
+        // Second pass: Check paths for blast resistance >= 4, otherwise continue
+        for (int[][] path : EXPLOSION_PATHS) {
+            boolean pathValid = true;  // Track if all blocks in the path meet the resistance condition
+            double minBlastResistance = Double.MAX_VALUE;
+
+            for (int[] offset : path) {
+                BlockPos checkPos = anchorPos.add(offset[0], offset[1], offset[2]);
+                currentBlock = world.getBlockState(checkPos);
+                double resistance = currentBlock.getBlock().getBlastResistance();
+
+                // Track the minimum blast resistance in the path
+                if (resistance < minBlastResistance) {
+                    minBlastResistance = resistance;
+                }
+
+                // Check if resistance is >= 4
+                if (resistance < 4) {
+                    pathValid = false;  // Mark path as invalid if resistance < 4
+                    break; // No need to check further positions in this path
+                }
+            }
+
+            if (pathValid) {
+                explosivity[c] = -1;
+                c++;
+                continue; // Proceed to the next path if this path is valid
+            }
+
+            // Calculate threshold for setting blocks to FAKE_AIR in this path
+            double threshold = 3.7 - minBlastResistance;
+
+            // Apply FAKE_AIR to blocks in path with resistance below threshold
+            for (int[] offset : path) {
+                BlockPos checkPos = anchorPos.add(offset[0], offset[1], offset[2]);
+                currentBlock = world.getBlockState(checkPos);
+                double resistance = currentBlock.getBlock().getBlastResistance();
+
+                // Set to FAKE_AIR if resistance is below the calculated threshold and not already air
+                if (resistance < threshold && currentBlock.getBlock() != Blocks.AIR) {
+                    world.setBlockState(checkPos, ModBlocks.FAKE_AIR.getDefaultState());
+                }
+            }
+        }
     }
 }

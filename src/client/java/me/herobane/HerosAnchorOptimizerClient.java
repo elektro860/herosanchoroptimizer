@@ -33,7 +33,8 @@ public class HerosAnchorOptimizerClient implements ClientModInitializer {
         LOGGER.info("Hello HerobaneNair's Anchor Optimizer");
 
 		// Set block render layers for custom blocks
-		// BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FAKE_ANCHOR, RenderLayer.getTranslucent());
+		BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FAKE_ANCHOR, RenderLayer.getTranslucent());
+		BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.GHOST_ANCHOR, RenderLayer.getTranslucent());
 		BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FAKE_AIR, RenderLayer.getTranslucent());
 
 		// Register an event for right-clicking a respawn anchor

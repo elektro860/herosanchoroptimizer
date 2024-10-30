@@ -16,7 +16,7 @@ public class ModBlocks {
                     .nonOpaque() // block is translucent
                     .strength(-1.0f) // can't Break
                     .dropsNothing() // Does not drop items when broken
-                    .replaceable() // Doesn't drop items
+                    .replaceable() // Replaceable with a fern
                     .sounds(BlockSoundGroup.POWDER_SNOW))); //cuz uh idk, doesn't really need a sound
 
     // Helper methods for adding blocks

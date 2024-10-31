@@ -16,7 +16,6 @@ import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class HerosAnchorOptimizerClient implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("heros_anchor_optimizer");
 
@@ -35,8 +34,7 @@ public class HerosAnchorOptimizerClient implements ClientModInitializer {
 				int charge = world.getBlockState(hitResult.getBlockPos()).get(RespawnAnchorBlock.CHARGES);
 				boolean holdingGlowstoneMainHand = player.getStackInHand(hand).isOf(Items.GLOWSTONE);
 				boolean holdingGlowstoneOffHand = player.getOffHandStack().isOf(Items.GLOWSTONE);
-				String dimension = world.getRegistryKey().getValue().toString();
-				boolean wouldExplode = !dimension.contains("_nether");
+				boolean wouldExplode = !world.getDimension().respawnAnchorWorks();
 
 				if (!player.isSneaking() && !holdingGlowstoneMainHand && !holdingGlowstoneOffHand && !isSingleplayer) {
 					if ((charge >= 1 && charge <= 3 && wouldExplode) || (charge == 4 && wouldExplode)) {

@@ -2,12 +2,12 @@ package me.herobane;
 
 import me.herobane.block.ModBlocks;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.RespawnAnchorBlock;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.BlockRenderLayer;
 import net.minecraft.item.Items;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.BlockHitResult;
@@ -19,8 +19,9 @@ public class HerosAnchorOptimizerClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 
+		ModBlocks.registerModBlocks();
 		// Set block render layers for custom blocks
-		BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.FAKE_ANCHOR, RenderLayer.getTranslucent());
+		BlockRenderLayerMap.putBlock(ModBlocks.FAKE_ANCHOR, BlockRenderLayer.TRANSLUCENT);
 
 		// Register an event for right-clicking a respawn anchor
 		UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {

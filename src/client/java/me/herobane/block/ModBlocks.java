@@ -1,31 +1,33 @@
 package me.herobane.block;
 
-import net.minecraft.block.*;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.sound.BlockSoundGroup;
+import java.util.function.Function;
+
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.Items;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 
 public class ModBlocks {
     // Existing block
-    public static final Block FAKE_ANCHOR = registerBlock(
-            new Block(AbstractBlock.Settings.create()
-                    .nonOpaque() // block is translucent
-                    .strength(-1.0f) // can't Break
-                    .dropsNothing() // Does not drop items when broken
-                    .replaceable() // Replaceable like a fern
-                    .sounds(BlockSoundGroup.POWDER_SNOW))); //cuz uh idk, doesn't really need a sound
+    public static final Block FAKE_ANCHOR = register("fake_anchor", Block::new,
+            Block.Settings.create().nonOpaque().strength(-1.0f)); // can't Break
 
     // Helper methods for adding blocks
-    private static Block registerBlock(Block block) {
-        registerBlockItem(block);
-        return Registry.register(Registries.BLOCK, Identifier.of("herosanchoroptimizer", "fake_anchor"), block);
+    // copied from https://wiki.fabricmc.net/tutorial:blocks
+    private static Block register(String path, Function<AbstractBlock.Settings, Block> factory,
+            AbstractBlock.Settings settings) {
+        final Identifier identifier = Identifier.of("tutorial", path);
+        final RegistryKey<Block> registryKey = RegistryKey.of(RegistryKeys.BLOCK, identifier);
+
+        final Block block = Blocks.register(registryKey, factory, settings);
+        Items.register(block);
+        return block;
     }
 
-    private static void registerBlockItem(Block block) {
-        Registry.register(Registries.ITEM, Identifier.of("herosanchoroptimizer", "fake_anchor"),
-                new BlockItem(block, new Item.Settings()));
+    // Force loads the class
+    public static void registerModBlocks() {
     }
 }

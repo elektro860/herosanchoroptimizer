@@ -19,7 +19,7 @@ public class ModBlocks {
     // copied from https://wiki.fabricmc.net/tutorial:blocks
     private static Block register(String path, Function<AbstractBlock.Settings, Block> factory,
             AbstractBlock.Settings settings) {
-        final Identifier identifier = Identifier.of("tutorial", path);
+        final Identifier identifier = Identifier.of("herosanchoroptimizer", path);
         final RegistryKey<Block> registryKey = RegistryKey.of(RegistryKeys.BLOCK, identifier);
 
         final Block block = Blocks.register(registryKey, factory, settings);
